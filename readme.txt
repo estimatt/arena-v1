@@ -1,0 +1,1 @@
+Matt: I cloned this from Callum's github on 2022-10-20 at about 1:45p ET with the intention to start from the beginning of this week's exercises, working from this directory. My solutions will have filenames like w0d1mcs.py and be in the same directory as the solutions provided by ARENA. That way, it will be easier to use import modules for use in solutions for subsequent days. 
