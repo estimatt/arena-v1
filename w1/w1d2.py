@@ -15,28 +15,36 @@ from fancy_einsum import einsum
 
 class PositionalEncoding(nn.Module):
 
-    def __init__(self, embedding_dim: int = 32, max_seq_len: int = 128):
+    def __init__(self, max_seq_len: int = 128, embedding_dim: int = 32):
+        super().__init__()
         self.L = embedding_dim
         self.d = max_seq_len
         self.P = np.zeros((self.L, self.d))
         self.n = 10000
 
-    # def forward(self, x: t.Tensor) -> t.Tensor:
-    def forward(self) -> t.Tensor:
         for delta in range(self.d-1):
             for i in range(self.L-1):
                 if delta % 2 == 0: 
                     self.P[i][delta] = (np.sin(i/self.n ** (2*delta/self.d)))
                 else:
                     self.P[i][delta] = (np.cos(i/self.n ** (2*delta/self.d)))
-        return self.P
+
+
+    def forward(self, x: t.Tensor) -> t.Tensor:
+        """
+        x shape is (batch, seq_len, embedding_dim)
+        """
+        seq_len = x.shape[-2]
+        return x + self.P[:seq_len, :]
 
 
 # %%
 
 PE1 = PositionalEncoding()
-print(PE1.forward().shape)
-px.imshow(PE1.forward(),color_continuous_scale="greens")
+x = t.randn(32, 128)
+print(PE1.forward(x).shape)
+px.imshow(PE1.forward(x),color_continuous_scale="greens")
+
 
 
 # %%
@@ -46,6 +54,8 @@ def single_head_attention(Q: t.Tensor, K: t.Tensor, V: t.Tensor, mask=False) -> 
     Should return the results of self-attention 
     (see the "Self-Attention in Detail" section of the Illustrated Transformer).
     With this function, you can ignore masking.
+
+    The dimensions of the tensors are batch, 
     Q: shape =
     K: shape =
     V: shape =
@@ -78,3 +88,5 @@ V = t.randn(2,3,4)
 
 print(single_head_attention(Q, K, V, mask=True))
 
+
+# %%
